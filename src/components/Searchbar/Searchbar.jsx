@@ -13,6 +13,8 @@ export function Searchbar({onSubmit}) {
 const onChangeInput = e => {
     setInputData( e.currentTarget.value.toLowerCase());
   };  
+
+  
   const handleSubmit = e => {
     e.preventDefault();
 

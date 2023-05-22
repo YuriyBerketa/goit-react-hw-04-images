@@ -1,47 +1,82 @@
 
 import './Modal.css';
 import { createPortal } from 'react-dom';
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
+
 
 const ModalRoot = document.querySelector('#ModalRoot');
 
-export class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.keyDown);
-  }
+export function Modal ({onClose, image}) {
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.keyDown);
-  }
+  useEffect(() => {
+    const keyDown = evt => {
+      if (evt.code === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', keyDown);
 
-  keyDown = e => {
-    if (e.code === 'Escape') {
-      this.props.onClose();
+    return () => {
+      window.removeEventListener('keydown', keyDown);
     }
-  };
-
-  onOverlayClose = e => {
+  }, [onClose]);
+  
+  const onOverlayClose = e => {
     if (e.currentTarget === e.target) {
-      this.props.onClose();
+      onClose();
     }
-  };
+  }
+const { largeImageURL } = image;
 
-  render() {
-    const { largeImageURL } = this.props.image;
-    return createPortal(
-      <div onClick={this.onOverlayClose} className="Overlay">
+return createPortal(
+      <div onClick={onOverlayClose} className="Overlay">
         <div className="Modal">
           <img src={largeImageURL} alt="img" />
         </div>
       </div>,
       ModalRoot
     );
-  }
+
 }
+
+// export class Modal extends Component {
+//   componentDidMount() {
+//     window.addEventListener('keydown', this.keyDown);
+//   }
+
+//   componentWillUnmount() {
+//     window.removeEventListener('keydown', this.keyDown);
+//   }
+
+//   keyDown = e => {
+//     if (e.code === 'Escape') {
+//       this.props.onClose();
+//     }
+//   };
+
+//   onOverlayClose = e => {
+//     if (e.currentTarget === e.target) {
+//       this.props.onClose();
+//     }
+//   };
+
+//   render() {
+//     const { largeImageURL } = this.props.image;
+//     return createPortal(
+//       <div onClick={this.onOverlayClose} className="Overlay">
+//         <div className="Modal">
+//           <img src={largeImageURL} alt="img" />
+//         </div>
+//       </div>,
+//       ModalRoot
+//     );
+//   }
+// }
 
 
 Modal.propTypes = {
   image: PropTypes.object,
   onClose: PropTypes.func,
-};
+}
